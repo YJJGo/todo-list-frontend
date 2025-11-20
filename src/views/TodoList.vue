@@ -2,33 +2,66 @@
   <el-card class="box-card" shadow="hover">
     <template #header>
       <div class="card-header">
-        <span class="title">📝 待办分类清单</span>
+        <!-- 左侧：标题 -->
+        <div class="header-left">
+          <span class="title">📝 待办清单</span>
+        </div>
 
-        <!-- 右上角：分类筛选器 -->
-        <el-select
-          v-model="filterCategory"
-          placeholder="筛选分类"
-          size="small"
-          style="width: 100px"
-        >
-          <el-option label="全部" value="全部" />
-          <el-option label="工作" value="工作" />
-          <el-option label="学习" value="学习" />
-          <el-option label="生活" value="生活" />
-          <el-option label="其他" value="其他" />
-        </el-select>
+        <!-- 右侧：操作区 (排序 -> 筛选 -> 新建) -->
+        <div class="header-actions">
+          <!-- 1. 排序按钮 -->
+          <el-tooltip :content="sortTooltip" placement="top">
+            <el-button
+              :type="sortBy === 'dueDatetime' ? 'primary' : 'default'"
+              circle
+              plain
+              size="small"
+              @click="toggleSort"
+              class="action-item"
+            >
+              <el-icon><Sort /></el-icon>
+            </el-button>
+          </el-tooltip>
+
+          <!-- 2. 分类筛选 -->
+          <el-select
+            v-model="filterCategory"
+            placeholder="筛选"
+            size="small"
+            class="action-item category-select"
+          >
+            <el-option label="全部分类" value="全部" />
+            <el-option label="工作" value="工作" />
+            <el-option label="学习" value="学习" />
+            <el-option label="生活" value="生活" />
+            <el-option label="其他" value="其他" />
+          </el-select>
+
+          <!-- 3. 新建按钮 (最显眼) -->
+          <el-button
+            type="primary"
+            size="small"
+            class="action-item"
+            @click="openAddDialog"
+          >
+            <el-icon class="el-icon--left"><Plus /></el-icon>新建
+          </el-button>
+        </div>
       </div>
     </template>
 
-    <TodoInput @add="handleAdd" :loading="loading" />
+    <!-- 引用 TodoInput 组件，并绑定 ref -->
+    <TodoInput ref="todoInputRef" @add="handleAdd" :loading="loading" />
 
-    <!-- 状态筛选器 (TodoFilter 组件保持之前的代码即可，不用动) -->
+    <!-- 状态筛选器 -->
     <TodoFilter v-model="filterStatus" :total="finalList.length" />
 
+    <!-- 列表区域 -->
     <div class="list-container" v-loading="loading">
+      <!-- ... 列表代码不变 ... -->
+      <!-- 为了展示精确到秒的时间，记得改一下 TodoItem 的显示格式，下面有说明 -->
       <transition name="fade" mode="out-in">
         <el-empty v-if="finalList.length === 0 && !loading" description="暂无任务" />
-
         <div v-else key="list">
           <transition-group name="list" tag="div">
             <TodoItem
@@ -58,16 +91,24 @@ const loading = ref(false)
 const todoList = ref<Todo[]>([])
 const filterStatus = ref<FilterType>('all')
 const filterCategory = ref<CategoryType>('全部') // 新增分类筛选状态
+const sortBy = ref<'createDatetime' | 'dueDatetime'>('createDatetime')
+const todoInputRef = ref()
+
+const sortTooltip = computed(() => {
+  return sortBy.value === 'createDatetime' ? '当前：按创建时间排序' : '当前：按截止日期排序'
+})
 
 // 初始化
-onMounted(async () => {
+const fetchList = async () => {
   loading.value = true
   try {
-    todoList.value = await todoApi.fetchTodos() // 获取所有数据
+    todoList.value = await todoApi.fetchTodos(sortBy.value)
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(fetchList)
 
 // 核心逻辑：双重过滤
 const finalList = computed(() => {
@@ -111,14 +152,45 @@ const handleToggle = async (item: Todo) => {
   item.completed = !item.completed
   await todoApi.toggleStatus(item.id, item.completed)
 }
+
+const toggleSort = () => {
+  sortBy.value = sortBy.value === 'createDatetime' ? 'dueDatetime' : 'createDatetime'
+  fetchList()
+}
+
+const openAddDialog = () => {
+  todoInputRef.value?.open()
+}
 </script>
 
 <style scoped>
-.box-card {
-  width: 600px; border-radius: 12px;
-}
 .card-header {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px; /* 统一高度 */
+}
+
+.title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* 统一间距 */
+.action-item {
+  margin-left: 12px;
+}
+
+.category-select {
+  width: 100px;
+}
+.box-card {
+  width: 500px; border-radius: 12px;
 }
 .list-container {
   min-height: 300px; position: relative;

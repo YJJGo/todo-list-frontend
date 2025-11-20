@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Todo } from '@/types/todo'
+import type { Todo, SortType  } from '@/types/todo'
 
 // 创建 axios 实例
 const request = axios.create({
@@ -14,13 +14,12 @@ request.interceptors.response.use(res => {
 
 export const todoApi = {
   // 获取列表
-  fetchTodos: async (): Promise<Todo[]> => {
-    const res: any = await request.get('/list')
-    if (res.code === 200) {
-      return res.data // 返回真正的 List
-    }
-    return []
-  },
+    fetchTodos: async (sortBy: SortType = 'createDatetime'): Promise<Todo[]> => {
+        const res: any = await request.get('/list', {
+            params: { sortBy }
+        })
+        return res.code === 200 ? res.data : []
+    },
 
   // 添加任务
   addTodo: async (payload: any): Promise<Todo> => {

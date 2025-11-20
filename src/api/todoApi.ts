@@ -23,8 +23,8 @@ export const todoApi = {
   },
 
   // 添加任务
-  addTodo: async (title: string, description: string): Promise<Todo> => {
-    const res: any = await request.post('/add', { title, description })
+  addTodo: async (payload: any): Promise<Todo> => {
+    const res: any = await request.post('/add', payload)
     return res.data
   },
 

@@ -4,7 +4,9 @@ export interface Todo {
   title: string
   description?: string
   completed: boolean
-  create_datetime: number
+  category: string  // 新增
+  createDatetime: number
 }
 
 export type FilterType = 'all' | 'active' | 'completed'
+export type CategoryType = '全部' | '工作' | '学习' | '生活' | '其他'

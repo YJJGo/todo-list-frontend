@@ -1,49 +1,43 @@
-// src/api/todoApi.ts
-import type { Todo } from '../types/todo.ts'
+import axios from 'axios'
+import type { Todo } from '@/types/todo'
 
-// 模拟数据库初始数据
-let mockData: Todo[] = [
-  { id: 1, title: '学习 Vue 3', description: '熟悉 Composition API', completed: true, createdAt: Date.now() },
-  { id: 2, title: '完成代码重构', description: '拆分组件结构', completed: false, createdAt: Date.now() }
-]
+// 创建 axios 实例
+const request = axios.create({
+  baseURL: 'http://localhost:8080/todo', // 后端地址
+  timeout: 5000
+})
+
+// 响应拦截器：自动解包 data
+request.interceptors.response.use(res => {
+  return res.data // 这里取到的就是 Result 对象
+})
 
 export const todoApi = {
   // 获取列表
-  fetchTodos: (): Promise<Todo[]> => {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve([...mockData]), 500)
-    })
+  fetchTodos: async (): Promise<Todo[]> => {
+    const res: any = await request.get('/list')
+    if (res.code === 200) {
+      return res.data // 返回真正的 List
+    }
+    return []
   },
 
   // 添加任务
-  addTodo: (title: string, description: string): Promise<Todo> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newItem: Todo = {
-          id: Date.now(),
-          title,
-          description,
-          completed: false,
-          createdAt: Date.now()
-        }
-        mockData.unshift(newItem)
-        resolve(newItem)
-      }, 300)
-    })
+  addTodo: async (title: string, description: string): Promise<Todo> => {
+    const res: any = await request.post('/add', { title, description })
+    return res.data
   },
 
-  // 删除任务
-  deleteTodo: (id: number): Promise<boolean> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        mockData = mockData.filter(item => item.id !== id)
-        resolve(true)
-      }, 200)
-    })
+  // 删除
+  deleteTodo: async (id: number) => {
+    await request.delete(`/delete/${id}`)
+    return true
   },
 
-  // 切换状态 (虽然前端可以直接改，但为了模拟真实场景，保留接口)
-  toggleStatus: (id: number): Promise<boolean> => {
-    return Promise.resolve(true)
+  // 切换状态
+  toggleStatus: async (id: number, completed: boolean) => { // 注意这里稍微改了下参数
+    // 后端 update 接口接收对象
+    await request.put('/update', { id, completed: completed ? 1 : 0 })
+    return true
   }
 }

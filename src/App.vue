@@ -1,11 +1,25 @@
-<script setup lang="ts"></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div class="app-wrapper">
+    <TodoList />
+  </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+import TodoList from '@/views/TodoList.vue'
+</script>
+
+<style>
+/* 全局重置或背景色建议放在这里或 main.css */
+body {
+  margin: 0;
+  background-color: #f5f7fa;
+}
+.app-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+  min-height: 100vh;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+</style>

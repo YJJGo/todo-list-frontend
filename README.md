@@ -1,48 +1,27 @@
-# todo-list-frontend
+# TODO List - 前端文档
 
-This template should help get you started developing with Vue 3 in Vite.
+这是一个基于 **Vue 3 + TypeScript + Vite + Element Plus** 构建的待办事项管理前端。
 
-## Recommended IDE Setup
+## 环境要求
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Node.js**: v16.0 或更高版本
+- **包管理器**: npm
 
-## Recommended Browser Setup
+## 快速运行
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+### 1. 安装依赖
+在 `frontend` 目录下执行：
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 npm install
 ```
+### 2. 配置后端地址
+默认配置连接本地后端 (`http://localhost:8080`)。
 
-### Compile and Hot-Reload for Development
+如果需要修改，请编辑文件：`src/api/todoApi.ts` 中的 `baseURL`。
 
-```sh
+### 3. 启动开发服务器
+```bash
 npm run dev
 ```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+启动成功后，控制台会输出访问地址（通常是 `http://localhost:5173`）。

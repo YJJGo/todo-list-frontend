@@ -4,6 +4,9 @@ export interface Todo {
   description?: string
   completed: boolean
   category: string
+  email?: string
+  reminderPreTime?: number
+  reminderSent?: boolean
   dueDatetime?: number
   createDatetime: number
   updateDatetime: number

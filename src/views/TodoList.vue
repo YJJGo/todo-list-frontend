@@ -132,9 +132,7 @@ const handleAdd = async (payload: any) => {
   loading.value = true
   try {
     const newItem = await todoApi.addTodo(payload)
-    newItem.category = payload.category
-
-    todoList.value.unshift(newItem)
+    fetchList()
     ElMessage.success('添加成功')
   } finally {
     loading.value = false
@@ -144,7 +142,7 @@ const handleAdd = async (payload: any) => {
 // ... handleDelete 和 handleToggle 保持不变 ...
 const handleDelete = async (id: number) => {
   await todoApi.deleteTodo(id)
-  todoList.value = todoList.value.filter(item => item.id !== id)
+  fetchList()
   ElMessage.success('已删除')
 }
 

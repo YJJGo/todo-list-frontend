@@ -15,9 +15,7 @@ request.interceptors.response.use(res => {
 export const todoApi = {
   // 获取列表
     fetchTodos: async (sortBy: SortType = 'createDatetime'): Promise<Todo[]> => {
-        const res: any = await request.get('/list', {
-            params: { sortBy }
-        })
+        const res: any = await request.post('/list', { sortBy })
         return res.code === 200 ? res.data : []
     },
 
